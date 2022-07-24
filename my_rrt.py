@@ -34,6 +34,8 @@ uav_rect = deploy_uav(screen_w, screen_h, obstacle_list, uav_side)
 flag_moving = False
 target_point = None
 
+path_list = []
+
 while True:
     main_surface.fill((0, 0, 0))
     for event in pygame.event.get():
@@ -44,7 +46,12 @@ while True:
             # uav_rect.right = event.pos[0]
             # new_x = event.pos[0] - uav_rect.left
             # new_y = event.pos[1] - uav_rect.top
-            target_point = (event.pos[0], event.pos[1])
+            point_ = (event.pos[0], event.pos[1])
+            path_list.insert(0, point_)
+            print(len(path_list))
+            if not target_point:
+                target_point = path_list[-1]
+            
 
             # print(event.pos)
 
@@ -61,19 +68,32 @@ while True:
     if target_point:
         UAV_steps_to_target(uav_rect, target_point)
 
-    # Collision with obstacle
-    if uav_rect.collidelistall(obstacle_list):
-        target_point = None
+    # # Collision with obstacle
+    # if uav_rect.collidelistall(obstacle_list):
+    #     target_point = None
 
     # Arriving to target point
     if target_point:
         if target_rect.colliderect(uav_rect): 
             target_point = None
+            path_list.pop()
+            if path_list:
+                target_point = path_list[-1]
             print('Arrived')
 
     # Draw path line
     if target_point:
         pygame.draw.line(main_surface, 'Yellow', uav_rect.topleft, target_point,4)
+
+    # Draw path_list 
+    if len(path_list) > 1:
+        points_to_draw = [[x[0],x[1]] for x in path_list]
+
+        pygame.draw.lines(main_surface, 'Cyan',False, points_to_draw,4)
+        # point1 = uav_rect.topleft
+        # for point2 in path_list:
+        #     pygame.draw.line(main_surface, 'Cyan', point1, point2,4)
+        #     point1 = point2
 
     pygame.draw.rect(main_surface, 'White', uav_rect)
 
