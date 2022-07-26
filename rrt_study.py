@@ -60,7 +60,6 @@ class Graph:
         self.trajectory_get_flag = False
         self.add_vertex(start_point)
         
-        
     def find_shortest_path(self):
         parent_vertex = (0,0)
         self.shortest_path = []
@@ -173,6 +172,10 @@ class Graph:
 
         return np.sqrt(dx**2 + dy**2)
 
+    def find_trajectory(self):
+        while not self.finsh_flag:
+            graph.update()
+
     def get_trajectory(self):
         # trajectory = self.find_shortest_path()
         trajectory = []
@@ -182,7 +185,6 @@ class Graph:
         #     trajectory.append(i)
         return trajectory
 
-    
     def get_trajecory_get_flag(self): return self.trajectory_get_flag
 
     def draw_graph(self, screen):
@@ -201,7 +203,6 @@ class Graph:
         for i in range(num_of_edges):
             print("edge ", i+1, ": ", self.list_of_edges[i])
     
-
 class UAV:
     def __init__(self, screen_w, screen_h, obstacle_list, uav_side = 40) -> None:
         self.screen_w = screen_w
@@ -267,7 +268,6 @@ class UAV:
         if len(self.trajectory) > 1:
             pygame.draw.lines(screen, 'Green',False, trajectory,4)
 
-
     def update(self):
         if self.target_point:
             self.step_toward_target_point()
@@ -300,9 +300,11 @@ class Obstacles:
         for obs in self.obstacle_list:
             pygame.draw.rect(screen, self.color, obs)
 
+class FogOfWar():
+    def __init__(self) -> None:
+        pass
 
 # Create graph
-
 obstacles = Obstacles(screen_w, screen_h)
 obstacle_list = obstacles.get_obstacle_list()
 graph = Graph(screen_w, screen_h, obstacle_list)
@@ -328,6 +330,9 @@ while True:
             # pos = uav.get_uav_position()
             print(uav.get_uav_position())
             graph.reset_graph(uav.get_uav_position(), event.pos)
+            graph.find_trajectory()
+            trajectory = graph.get_trajectory()
+            uav.set_trajectory(trajectory)
             # uav.set_target_point(event.pos)
     
     # Drawing
@@ -345,62 +350,8 @@ while True:
     if graph.get_finish_point():
         target_rect = pygame.draw.circle(screen, 'Red', graph.get_finish_point(),10,4)
     
-    if graph.get_finsh_flag():
-        if not graph.get_trajecory_get_flag():
-            trajectory = graph.get_trajectory()
-            uav.set_trajectory(trajectory)
-            # z = 1
-
     uav.update()
     graph.update()
 
-    # # Draw graph 
-    # if graph.get_finsh_flag():
-    #     graph.draw_graph(screen)
-    #     graph.draw_trajectory()
-    # else:
-    #     graph.draw_graph(screen)
-
-    # # Grow up graph
-    # if graph.get_finsh_flag():
-    #     if graph.get_finish_point():
-    #         graph.grow_up()
-    # else:
-    #     pass
-
-
-    
-    # if i % 10 == 0:
-
-    # graph.draw_graph(screen)
-
-    # if graph.get_finsh_flag():
-    #     graph.draw_path(screen)
-    # else:
-    #     if graph.get_finish_point():
-    #         graph.grow_up()
-
-    # UAV
-    # if graph.get_finsh_flag():
-    #     trajectory = graph.get_trajectory()
-    
-    # if trajectory:
-    #     target_point = trajectory.pop(-1)
-    # if target_point:
-    #     UAV_steps_to_target(uav_rect, target_point)
-    
-
-    # Draw Target point
-    # if target_point:
-    #     target_rect = pygame.draw.circle(screen, 'Yellow', target_point,10,4)
-
-    # Arriving to target point
-    # if target_point:
-    #     if target_rect.colliderect(uav_rect): 
-    #         target_point = None
-    #         trajectory.pop()
-    #         if trajectory:
-    #             target_point = trajectory[-1]
-    #         print('Arrived')
     pygame.display.update()
     clock.tick(60)
