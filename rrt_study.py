@@ -301,7 +301,7 @@ class Obstacles:
             pygame.draw.rect(screen, self.color, obs)
 
 class FogOfWar():
-    def __init__(self) -> None:
+    def __init__(self, screen_w, screen_h) -> None:
         pass
 
 # Create graph
@@ -312,8 +312,8 @@ graph = Graph(screen_w, screen_h, obstacle_list)
 # Create UAV
 uav = UAV(screen_w, screen_h, obstacle_list)
 
-flag_moving = False
-target_point = None
+# flag_moving = False
+# target_point = None
 graph.set_start_point(uav.get_uav_position())
 
 
@@ -336,16 +336,15 @@ while True:
             # uav.set_target_point(event.pos)
     
     # Drawing
+
     # Surface
     screen.fill(WHITE)
     # Obstacles
     obstacles.draw(screen)
     # Graph
     graph.draw_graph(screen)
-
     # UAV
     uav.draw(screen)
-
     # Draw Target point
     if graph.get_finish_point():
         target_rect = pygame.draw.circle(screen, 'Red', graph.get_finish_point(),10,4)

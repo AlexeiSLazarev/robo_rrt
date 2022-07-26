@@ -35,6 +35,7 @@ flag_moving = False
 target_point = None
 
 path_list = []
+rrt = None
 
 while True:
     main_surface.fill((0, 0, 0))
@@ -46,11 +47,15 @@ while True:
             # uav_rect.right = event.pos[0]
             # new_x = event.pos[0] - uav_rect.left
             # new_y = event.pos[1] - uav_rect.top
-            point_ = (event.pos[0], event.pos[1])
-            path_list.insert(0, point_)
-            print(len(path_list))
+            target_p = (event.pos[0], event.pos[1])
+            rrt = RRT_vanilla(uav_rect, target_p, screen_w, screen_h, obstacle_list)
+            rrt.grow_tree(main_surface)
+            # [path_list, path_graph] = find_path_to_target(screen_w, screen_h, obstacle_list, uav_rect, target_p)
+            # path_list.insert(0, target_p)
+            # print(len(path_list))
             if not target_point:
-                target_point = path_list[-1]
+                target_point = target_p
+                # target_point = path_list[-1]
             
 
             # print(event.pos)
@@ -65,21 +70,21 @@ while True:
 
     
     # Move UAV to a target point
-    if target_point:
-        UAV_steps_to_target(uav_rect, target_point)
+    # if target_point:
+    #     UAV_steps_to_target(uav_rect, target_point)
 
     # # Collision with obstacle
     # if uav_rect.collidelistall(obstacle_list):
     #     target_point = None
 
     # Arriving to target point
-    if target_point:
-        if target_rect.colliderect(uav_rect): 
-            target_point = None
-            path_list.pop()
-            if path_list:
-                target_point = path_list[-1]
-            print('Arrived')
+    # if target_point:
+    #     if target_rect.colliderect(uav_rect): 
+    #         target_point = None
+    #         path_list.pop()
+    #         if path_list:
+    #             target_point = path_list[-1]
+    #         print('Arrived')
 
     # Draw path line
     if target_point:
@@ -97,9 +102,13 @@ while True:
 
     pygame.draw.rect(main_surface, 'White', uav_rect)
 
+    # Draw RRT
+    if rrt:
+        rrt.grow_tree(main_surface)
+
 
     pygame.display.update()
-    clock.tick(10)
+    clock.tick(100)
     
 
 

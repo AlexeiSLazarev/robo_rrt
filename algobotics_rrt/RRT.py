@@ -20,6 +20,7 @@ def main():
     
     obstacles = graph.makeobs()
     map.drawMap(obstacles)
+    clock = pygame.time.Clock()
     
     t1 = time.time()
     while (not graph.path_to_goal()):
@@ -47,6 +48,7 @@ def main():
     pygame.display.update()
     pygame.event.clear()
     pygame.event.wait()
+    clock.tick(20)
     
     # while(True):
     #     x,y = graph.sample_envir()

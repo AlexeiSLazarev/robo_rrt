@@ -225,8 +225,6 @@ class RRTGraph:
             
             pathCoords.append((x, y))
         return pathCoords
-            
-        
     
     def cost(self):
         pass
