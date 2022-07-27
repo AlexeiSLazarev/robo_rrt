@@ -302,6 +302,8 @@ class Obstacles:
 
 class FogOfWar():
     def __init__(self, screen_w, screen_h) -> None:
+        self
+
         pass
 
 # Create graph
